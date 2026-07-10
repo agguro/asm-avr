@@ -8,7 +8,7 @@
 
 ; Change this value to your desired interval in milliseconds
 ; 1000 = 1 second, 500 = 0.5 seconds, 250 = 0.25 seconds
-.equ MS_INTERVAL, 500 
+.equ MS_INTERVAL, 500
 
 ; The Formula: (F_CPU / 1000) gives ticks per millisecond
 ; Then multiply by MS_INTERVAL and divide by PRESCALER
@@ -20,22 +20,22 @@
 .equ OCR_HIGH, (OCR_VALUE >> 8)
 
 ; --- I/O Register Addresses (0x00 - 0x3F) ---
-.equ DDRB,   0x04  
+.equ DDRB,   0x04
 .equ PORTB,  0x05
-.equ PINB,   0x03  
-.equ SPH,    0x3E  
-.equ SPL,    0x3D  
-.equ SREG,   0x3F  
+.equ PINB,   0x03
+.equ SPH,    0x3E
+.equ SPL,    0x3D
+.equ SREG,   0x3F
 
 ; --- Extended Register Addresses (0x60+) ---
 ; These must be used with STS/LDS
-.equ TIMSK1, 0x6F  
-.equ TCCR1A, 0x80  
-.equ TCCR1B, 0x81  
+.equ TIMSK1, 0x6F
+.equ TCCR1A, 0x80
+.equ TCCR1B, 0x81
 .equ TCNT1H, 0x85
 .equ TCNT1L, 0x84
-.equ OCR1AH, 0x89  
-.equ OCR1AL, 0x88  
+.equ OCR1AH, 0x89
+.equ OCR1AL, 0x88
 
 ; --- Bitmasks ---
 .equ PB5,    5     ; Pin 13
@@ -49,7 +49,7 @@
 __vectors:
     jmp reset                ; 0x0000 Reset Vector
     .org 0x002C              ; Timer1 COMPA Vector address
-    jmp timer1_compa_isr 
+    jmp timer1_compa_isr
 
 .section .text
 .global reset
@@ -61,12 +61,12 @@ reset:
     out SPL, r16
 
     ; 2. Set PB5 (Pin 13) as Output
-    sbi DDRB, PB5              
+    sbi DDRB, PB5
 
     ; 3. Setup Timer1
     eor r16, r16
     sts TCCR1A, r16          ; Normal Mode
-    
+
     ; Clear the counter (TCNT1) to ensure the first interval is exactly 1s
     eor r16, r16
     sts TCNT1H, r16
@@ -98,12 +98,12 @@ main_loop:
 timer1_compa_isr:
     push r16                 ; Save r16
     in   r16, SREG           ; Save SREG
-    push r16                 
+    push r16
     push r17                 ; Save r17
 
     ; Toggle LED using the PINB hardware trick
     ldi  r17, (1 << PB5)     ; 0x20
-    out  PINB, r17            
+    out  PINB, r17
 
     pop  r17                 ; Restore r17
     pop  r16                 ; Pop SREG into r16
